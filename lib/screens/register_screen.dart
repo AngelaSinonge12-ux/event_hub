@@ -5,14 +5,12 @@ import 'screens.dart';
 
 class Register extends StatefulWidget {
   const Register({super.key});
-
   @override
   State<Register> createState() => _RegisterState();
 }
 
 class _RegisterState extends State<Register> {
   final loginController = LoginController();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,14 +21,14 @@ class _RegisterState extends State<Register> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             ClipRRect(
-        borderRadius: BorderRadius.circular(12), 
-        child: Image.asset(
-          'assets/images/register.png', 
-          height: 150, 
-          fit: BoxFit.cover,
-          ),
-          ),
-           
+              borderRadius: BorderRadius.circular(12),
+              child: Image.asset(
+                'assets/images/register.png',
+                height: 150,
+                fit: BoxFit.cover,
+              ),
+            ),
+
             const SizedBox(height: 40),
             Container(
               padding: const EdgeInsets.all(20),
@@ -77,7 +75,7 @@ class _RegisterState extends State<Register> {
                 height: 50,
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  color:Colors.indigo,
+                  color: Colors.indigo,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 alignment: Alignment.center,
@@ -96,18 +94,13 @@ class _RegisterState extends State<Register> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => const Login(), 
-                  ),
+                  MaterialPageRoute(builder: (context) => const Login()),
                 );
               },
               child: RichText(
                 text: const TextSpan(
                   text: "Already have an account? ",
-                  style: TextStyle(
-                    color: Colors.grey,
-                    fontSize: 14,
-                  ),
+                  style: TextStyle(color: Colors.grey, fontSize: 14),
                   children: [
                     TextSpan(
                       text: "Register",

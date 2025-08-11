@@ -1,6 +1,6 @@
-
+import 'package:event_hub/screens/register_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:event_hub/screens/register.dart';
+
 import 'login_controller.dart';
 import 'screens.dart';
 
@@ -13,7 +13,6 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   final loginController = LoginController();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,14 +22,14 @@ class _LoginState extends State<Login> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-                 ClipRRect(
-                borderRadius: BorderRadius.circular(12), 
-                child: Image.asset(
-                  'assets/images/login.png', 
-                  height: 150, 
-                  fit: BoxFit.cover,
-                  ),
-                  ),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Image.asset(
+                'assets/images/login.png',
+                height: 150,
+                fit: BoxFit.cover,
+              ),
+            ),
             const SizedBox(height: 40),
 
             Container(
@@ -71,14 +70,14 @@ class _LoginState extends State<Login> {
                 ],
               ),
             ),
-                 const SizedBox(height: 40),
-                GestureDetector(
+            const SizedBox(height: 40),
+            GestureDetector(
               onTap: loginController.handleLogin,
               child: Container(
                 height: 50,
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  color:Colors.indigo,
+                  color: Colors.indigo,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 alignment: Alignment.center,
@@ -97,18 +96,13 @@ class _LoginState extends State<Login> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => const Register(), 
-                  ),
+                  MaterialPageRoute(builder: (context) => const Register()),
                 );
               },
               child: RichText(
                 text: const TextSpan(
                   text: "Don't have an account? ",
-                  style: TextStyle(
-                    color: Colors.grey,
-                    fontSize: 14,
-                  ),
+                  style: TextStyle(color: Colors.grey, fontSize: 14),
                   children: [
                     TextSpan(
                       text: "Register",
@@ -127,4 +121,3 @@ class _LoginState extends State<Login> {
     );
   }
 }
-
