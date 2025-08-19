@@ -2,14 +2,14 @@ class User {
   final int id;
   final String name;
   final String email;
-  final String phone;
+  // final String phone;
   final String password;
 
   User({
     required this.id,
     required this.name,
     required this.email,
-    required this.phone,
+    // required this.phone,
     required this.password,
   });
 
@@ -18,7 +18,7 @@ class User {
       id: json['id'],
       name: json['name'],
       email: json['email'],
-      phone: json['phone'],
+      // phone: json['phone'],
       password: json['password'],
     );
   }
@@ -28,7 +28,7 @@ class User {
       'id': id,
       'name': name,
       'email': email,
-      'phone': phone,
+      // 'phone': phone,
       'password': password,
     };
   }

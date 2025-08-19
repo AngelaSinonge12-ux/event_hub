@@ -1,8 +1,7 @@
-import 'package:event_hub/screens/register_screen.dart';
+import 'package:event_hub/screens/login_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:event_hub/screens/register_screen.dart';
 
-import 'login_controller.dart';
-import 'screens.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -13,6 +12,9 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   final loginController = LoginController();
+
+  bool loading = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,7 +33,6 @@ class _LoginState extends State<Login> {
               ),
             ),
             const SizedBox(height: 40),
-
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
@@ -47,32 +48,40 @@ class _LoginState extends State<Login> {
               ),
               child: Column(
                 children: [
-                  CustomTextField(
-                    hint: "Full Name",
-                    controller: loginController.fullNameController,
-                  ),
                   const SizedBox(height: 16),
-                  CustomTextField(
-                    hint: "Email",
+                  TextField(
                     controller: loginController.emailController,
+                    decoration: const InputDecoration(hintText: "Email"),
                   ),
                   const SizedBox(height: 16),
-                  CustomTextField(
-                    hint: "Phone",
-                    controller: loginController.phoneController,
-                  ),
-                  const SizedBox(height: 16),
-                  CustomTextField(
-                    hint: "Password",
+                  TextField(
                     controller: loginController.passwordController,
-                    obscure: true,
+                    obscureText: true,
+                    decoration: const InputDecoration(hintText: "Password"),
                   ),
                 ],
               ),
             ),
             const SizedBox(height: 40),
             GestureDetector(
-              onTap: loginController.handleLogin,
+              onTap: () async {
+                setState(() => loading = true);
+                final result = await loginController.handleLogin();
+                setState(() => loading = false);
+
+                if (result.containsKey("token")) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Login successful!")),
+                  );
+                  // Navigate to home screen
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                        content: Text(result["message"] ??
+                            "Login failed, check credentials")),
+                  );
+                }
+              },
               child: Container(
                 height: 50,
                 width: double.infinity,
@@ -81,14 +90,16 @@ class _LoginState extends State<Login> {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 alignment: Alignment.center,
-                child: const Text(
-                  "Login",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
+                child: loading
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : const Text(
+                        "Login",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
               ),
             ),
             const SizedBox(height: 20),

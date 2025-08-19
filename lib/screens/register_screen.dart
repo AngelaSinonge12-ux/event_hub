@@ -1,16 +1,18 @@
-import 'package:event_hub/screens/login_screen.dart';
+import 'package:event_hub/screens/login_controller.dart';
 import 'package:flutter/material.dart';
-import 'login_controller.dart';
-import 'screens.dart';
+import 'login_screen.dart';
 
 class Register extends StatefulWidget {
   const Register({super.key});
+
   @override
   State<Register> createState() => _RegisterState();
 }
 
 class _RegisterState extends State<Register> {
   final loginController = LoginController();
+  bool loading = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,7 +30,6 @@ class _RegisterState extends State<Register> {
                 fit: BoxFit.cover,
               ),
             ),
-
             const SizedBox(height: 40),
             Container(
               padding: const EdgeInsets.all(20),
@@ -37,7 +38,7 @@ class _RegisterState extends State<Register> {
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.white,
+                    color: Colors.grey.shade300,
                     blurRadius: 8,
                     offset: const Offset(0, 4),
                   ),
@@ -45,32 +46,49 @@ class _RegisterState extends State<Register> {
               ),
               child: Column(
                 children: [
-                  CustomTextField(
-                    hint: "Full Name",
-                    controller: loginController.fullNameController,
+                  TextField(
+                    controller: loginController.nameController,
+                    decoration: const InputDecoration(hintText: "Full Name"),
                   ),
                   const SizedBox(height: 16),
-                  CustomTextField(
-                    hint: "Email",
+                  TextField(
                     controller: loginController.emailController,
+                    decoration: const InputDecoration(hintText: "Email"),
                   ),
                   const SizedBox(height: 16),
-                  CustomTextField(
-                    hint: "Phone",
-                    controller: loginController.phoneController,
-                  ),
-                  const SizedBox(height: 16),
-                  CustomTextField(
-                    hint: "Password",
+                  TextField(
                     controller: loginController.passwordController,
-                    obscure: true,
+                    obscureText: true,
+                    decoration: const InputDecoration(hintText: "Password"),
                   ),
                 ],
               ),
             ),
             const SizedBox(height: 40),
             GestureDetector(
-              onTap: loginController.handleLogin,
+              onTap: () async {
+                setState(() => loading = true);
+                final result = await loginController.handleRegister();
+                setState(() => loading = false);
+
+                if (result.containsKey("user")) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Registration successful!")),
+                  );
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const Login()),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        result["message"] ?? "Registration failed, try again",
+                      ),
+                    ),
+                  );
+                }
+              },
               child: Container(
                 height: 50,
                 width: double.infinity,
@@ -79,20 +97,22 @@ class _RegisterState extends State<Register> {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 alignment: Alignment.center,
-                child: const Text(
-                  "Register",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
+                child: loading
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : const Text(
+                        "Register",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
               ),
             ),
             const SizedBox(height: 20),
             GestureDetector(
               onTap: () {
-                Navigator.push(
+                Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => const Login()),
                 );
@@ -103,7 +123,7 @@ class _RegisterState extends State<Register> {
                   style: TextStyle(color: Colors.grey, fontSize: 14),
                   children: [
                     TextSpan(
-                      text: "Register",
+                      text: "Login",
                       style: TextStyle(
                         color: Colors.indigo,
                         fontWeight: FontWeight.bold,
