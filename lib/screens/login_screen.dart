@@ -1,3 +1,10 @@
+<<<<<<< Updated upstream
+=======
+// ignore_for_file: use_build_context_synchronously
+
+import 'package:event_hub/screens/login_controller.dart';
+import 'package:flutter/material.dart';
+>>>>>>> Stashed changes
 import 'package:event_hub/screens/register_screen.dart';
 import 'package:flutter/material.dart';
 

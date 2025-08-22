@@ -24,6 +24,8 @@ class Booking {
     );
   }
 
+  get availableSeats => null;
+
   Map<String, dynamic> toJson() {
     return {
       'id': id,

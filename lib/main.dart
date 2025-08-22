@@ -2,11 +2,7 @@ import 'package:event_hub/screens/landing_page.dart';
 import 'package:event_hub/screens/login_screen.dart';
 import 'package:event_hub/screens/register_screen.dart';
 import 'package:flutter/material.dart';
-// import 'screens/landing_screen.dart';
-
 import 'screens/events_screen.dart';
-// import 'screens/event_details_screen.dart';
-// import 'screens/booking_screen.dart';
 import 'screens/bookings_screen.dart';
 
 void main() {
@@ -29,8 +25,8 @@ class MyApp extends StatelessWidget {
         '/register': (context) => const Register(),
         '/events': (context) => const EventScreen(),
         // '/event-details': (context) => const EventDetailsScreen(),
-        '/booking': (context) => const BookingScreen(),
-        // '/bookings': (context) => const BookingsScreen(),
+        '/booking': (context) => const BookingListScreen(),
+       //'/booking': (context) => const BookingConfirmationScreenState(),
       },
     );
   }
