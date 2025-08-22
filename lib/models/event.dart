@@ -1,10 +1,10 @@
-import 'package:flutter/material.dart'; 
-import 'package:decimal/decimal.dart'; 
+// import 'package:flutter/material.dart';
+import 'package:decimal/decimal.dart';
 
 class Event {
   final int id;
   final String title;
-  final Text description;
+  final String description; // ✅ Changed from Text to String
   final String location;
   final int totalSeats;
   final Decimal price;
@@ -24,22 +24,26 @@ class Event {
     return Event(
       id: json['id'],
       title: json['title'],
-      description: Text(json['description']),
+      description: json['description'] ?? '', // ✅ Safe null handling
       location: json['location'],
       totalSeats: json['total_seats'],
       price: Decimal.parse(json['price'].toString()),
       date: DateTime.parse(json['date']),
-    );}
+    );
+  }
 
-  Map<String, dynamic> toJson() {
+  // ✅ This is the map you can pass to BookingScreen
+  Map<String, dynamic> toMap() {
     return {
       'id': id,
       'title': title,
-      'description': description.data,
+      'description': description,
       'location': location,
-      'total_seats': totalSeats,
+      'totalSeats': totalSeats,
       'price': price.toString(),
       'date': date.toIso8601String(),
+      'image':
+          'https://picsum.photos/200/300?random=$id', // optional placeholder
     };
   }
 }

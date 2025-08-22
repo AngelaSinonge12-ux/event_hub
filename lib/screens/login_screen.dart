@@ -1,7 +1,7 @@
 import 'package:event_hub/screens/login_controller.dart';
-import 'package:flutter/material.dart';
 import 'package:event_hub/screens/register_screen.dart';
-
+import 'package:event_hub/screens/events_screen.dart'; // Import your events page here
+import 'package:flutter/material.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -12,8 +12,14 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   final loginController = LoginController();
-
+  final _formKey = GlobalKey<FormState>();
   bool loading = false;
+
+  @override
+  void dispose() {
+    loginController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +34,7 @@ class _LoginState extends State<Login> {
               borderRadius: BorderRadius.circular(12),
               child: Image.asset(
                 'assets/images/login.png',
-                height: 150,
+                height: 200,
                 fit: BoxFit.cover,
               ),
             ),
@@ -46,40 +52,71 @@ class _LoginState extends State<Login> {
                   ),
                 ],
               ),
-              child: Column(
-                children: [
-                  const SizedBox(height: 16),
-                  TextField(
-                    controller: loginController.emailController,
-                    decoration: const InputDecoration(hintText: "Email"),
-                  ),
-                  const SizedBox(height: 16),
-                  TextField(
-                    controller: loginController.passwordController,
-                    obscureText: true,
-                    decoration: const InputDecoration(hintText: "Password"),
-                  ),
-                ],
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    TextFormField(
+                      controller: loginController.emailController,
+                      decoration: const InputDecoration(hintText: "Email"),
+                      keyboardType: TextInputType.emailAddress,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Email is required";
+                        }
+                        if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
+                          return "Enter a valid email";
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: loginController.passwordController,
+                      obscureText: true,
+                      decoration: const InputDecoration(hintText: "Password"),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Password is required";
+                        }
+                        if (value.length < 6) {
+                          return "Password must be at least 6 characters";
+                        }
+                        return null;
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
             const SizedBox(height: 40),
             GestureDetector(
               onTap: () async {
-                setState(() => loading = true);
-                final result = await loginController.handleLogin();
-                setState(() => loading = false);
+                if (_formKey.currentState!.validate()) {
+                  setState(() => loading = true);
 
-                if (result.containsKey("token")) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Login successful!")),
-                  );
-                  // Navigate to home screen
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                        content: Text(result["message"] ??
-                            "Login failed, check credentials")),
-                  );
+                  final result = await loginController.handleLogin();
+
+                  setState(() => loading = false);
+
+                  if (result["success"] == true) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Login successful!")),
+                    );
+                    // Navigate to Events screen
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const EventsScreen(email: ''),
+                      ),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(result["message"] ?? "Login failed"),
+                      ),
+                    );
+                  }
                 }
               },
               child: Container(
