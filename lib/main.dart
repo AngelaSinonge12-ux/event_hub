@@ -1,3 +1,4 @@
+import 'package:event_hub/screens/bookings_details.dart';
 import 'package:event_hub/screens/landing_page.dart';
 import 'package:event_hub/screens/login_screen.dart';
 import 'package:event_hub/screens/register_screen.dart';
@@ -20,13 +21,14 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(primarySwatch: Colors.indigo),
       initialRoute: '/',
       routes: {
-        '/': (context) => const LandingScreen(),
+        '/': (context) => const BookingListScreen(),
         '/login': (context) => const Login(),
         '/register': (context) => const Register(),
         '/events': (context) => const EventScreen(),
         // '/event-details': (context) => const EventDetailsScreen(),
         '/booking': (context) => const BookingListScreen(),
-       //'/booking': (context) => const BookingConfirmationScreenState(),
+       // ignore: equal_keys_in_map
+      // '/bookings_details': (context) => BookingConfirmationScreen(eventId: 1, availableSeats: 23, bookingId:1 ,),
       },
     );
   }

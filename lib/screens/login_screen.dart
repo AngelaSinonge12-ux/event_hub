@@ -1,14 +1,8 @@
-<<<<<<< Updated upstream
-=======
-// ignore_for_file: use_build_context_synchronously
 
+// ignore_for_file: use_build_context_synchronously
 import 'package:event_hub/screens/login_controller.dart';
 import 'package:flutter/material.dart';
->>>>>>> Stashed changes
 import 'package:event_hub/screens/register_screen.dart';
-import 'package:flutter/material.dart';
-
-import 'login_controller.dart';
 import 'screens.dart';
 
 class Login extends StatefulWidget {
@@ -64,10 +58,7 @@ class _LoginState extends State<Login> {
                     controller: loginController.emailController,
                   ),
                   const SizedBox(height: 16),
-                  CustomTextField(
-                    hint: "Phone",
-                    controller: loginController.phoneController,
-                  ),
+                 
                   const SizedBox(height: 16),
                   CustomTextField(
                     hint: "Password",

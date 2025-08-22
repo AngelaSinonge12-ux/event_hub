@@ -83,7 +83,7 @@ class _BookingListScreenState extends State<BookingListScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => BookingConfirmationScreen(booking: booking,
+                          builder: (context) => BookingConfirmationScreen(
                            eventId: booking.eventId,
                             availableSeats: booking.availableSeats,
                              bookingId: booking.id),

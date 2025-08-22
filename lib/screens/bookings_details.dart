@@ -1,6 +1,6 @@
-// ignore_for_file: use_build_context_synchronously, library_private_types_in_public_api
-import 'package:event_hub/models/bookings.dart';
-import 'package:event_hub/screens/bookings_screen.dart';
+ // ignore_for_file: library_private_types_in_public_api
+
+ import 'package:event_hub/screens/bookings_screen.dart';
 import 'package:event_hub/services/api_service.dart';
 import 'package:flutter/material.dart';
 
@@ -11,7 +11,7 @@ class BookingConfirmationScreen extends StatefulWidget {
   const BookingConfirmationScreen({
     super.key,
     required this.eventId,
-    required this.availableSeats, required int bookingId, required Booking booking,
+    required this.availableSeats, required int bookingId,
   });
 
   @override
@@ -27,10 +27,10 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
   @override
   void initState() {
     super.initState();
+    _selectedSeats = widget.availableSeats > 0 ? 1 : 0;
     _fetchEventDetails();
   }
 
- 
   Future<void> _fetchEventDetails() async {
     try {
       final event = await ApiService.getEventDetails(widget.eventId);
@@ -38,9 +38,11 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
         _eventDetails = event;
       });
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Failed to load event details: $e")),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Failed to load event details: $e")),
+        );
+      }
     }
   }
 
@@ -54,38 +56,45 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
         eventId: widget.eventId,
         seats: _selectedSeats,
       );
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Booking successful!')),
-      );
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const BookingListScreen()),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Booking successful!')),
+        );
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const BookingListScreen()),
+          (Route<dynamic> route) => false, 
+        );
+      }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to book: $e')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to book: $e')),
+        );
+      }
     } finally {
-      setState(() {
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
   Future<void> _showConfirmationDialog() async {
     final confirm = await showDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
+      builder: (context) => AlertDialog(
         title: const Text("Confirm Booking"),
         content: Text(
             "Are you sure you want to book $_selectedSeats seat(s) for ${_eventDetails?['title'] ?? 'this event'}?"),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
+            onPressed: () => Navigator.pop(context, false),
             child: const Text("Cancel"),
           ),
           ElevatedButton(
-            onPressed: () => Navigator.pop(ctx, true),
+            onPressed: () => Navigator.pop(context, true),
             child: const Text("Confirm"),
           ),
         ],
@@ -110,51 +119,58 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (_eventDetails != null) ...[
-              Text(
-                _eventDetails?['title'] ?? "Event #${widget.eventId}",
-                style:
-                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 5),
-              Text("Date: ${_eventDetails?['date'] ?? 'N/A'}"),
-            ] else
-              Text("Loading event details..."),
-
+            if (_eventDetails != null)
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    _eventDetails?['title'] ?? "Event #${widget.eventId}",
+                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 5),
+                  Text("Date: ${_eventDetails?['date'] ?? 'N/A'}"),
+                ],
+              )
+            else
+              const Text("Loading event details..."),
+            
             const SizedBox(height: 20),
             Text("Available Seats: ${widget.availableSeats}"),
             const SizedBox(height: 20),
 
-            if (!noSeatsAvailable) ...[
-              const Text("Number of Seats:"),
-              DropdownButton<int>(
-                value: _selectedSeats,
-                items: List.generate(widget.availableSeats, (index) => index + 1)
-                    .map((int value) {
-                  return DropdownMenuItem<int>(
-                    value: value,
-                    child: Text(value.toString()),
-                  );
-                }).toList(),
-                onChanged: (int? newValue) {
-                  setState(() {
-                    _selectedSeats = newValue!;
-                  });
-                },
+            if (!noSeatsAvailable)
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text("Number of Seats:"),
+                  DropdownButton<int>(
+                    value: _selectedSeats,
+                    items: List.generate(widget.availableSeats, (index) => index + 1)
+                        .map((int value) {
+                      return DropdownMenuItem<int>(
+                        value: value,
+                        child: Text(value.toString()),
+                      );
+                    }).toList(),
+                    onChanged: (int? newValue) {
+                      if (newValue != null) {
+                        setState(() {
+                          _selectedSeats = newValue;
+                        });
+                      }
+                    },
+                  ),
+                ],
               ),
-            ],
-
+            
             const SizedBox(height: 20),
             _isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed:
-                          noSeatsAvailable ? null : _showConfirmationDialog,
-                      child: Text(noSeatsAvailable
-                          ? "No Seats Available"
-                          : "Confirm and Pay"),
+                      onPressed: noSeatsAvailable ? null : _showConfirmationDialog,
+                      child: Text(noSeatsAvailable ? "No Seats Available" : "Confirm and Pay"),
                     ),
                   ),
           ],
